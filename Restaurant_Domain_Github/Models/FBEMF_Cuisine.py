@@ -252,18 +252,7 @@ def ndcg_score1(y_true, y_score, n, gains="linear"):
     actual = dcg_score(y_true, y_score, n, gains)
     return actual / best
 
-def calc_exp(rate,neighbor):    #calculate the explainability table
-    expl = numpy.zeros(rate.shape)
-    dist_items = metrics.pairwise.pairwise_distances(rate, Y=None, metric='cosine', n_jobs=-1)
-    sorted_ind = numpy.argsort(dist_items, axis=1) #increasing order based on distance therefore index 0 has the most similar(itself)
-    for i in range(rate.shape[0]):
-        for j in range(rate.shape[1]):
-            #if rate[i][j] >0 :
-            sims = sorted_ind[i,1:(neighbor+1)]  #index of the neighbors
-            temp = rate[sims,j]
-            num = len(numpy.where(temp>0)[0])/ float(neighbor)
-            expl[i][j] = num
-    return expl
+
 
 ###############################################################################
 
@@ -508,9 +497,7 @@ if __name__ == "__main__":
     n_users = alldata.userID.unique().shape[0]
     n_items = alldata.placeID.unique().shape[0]
     n_cuisine = cuisinedata.Rcuisine.unique().shape[0]
-    print n_cuisine
-    print n_users
-    print n_items
+
     from sklearn import cross_validation as cv
     train_data, test_data = cv.train_test_split(data, test_size=0.1)
 
@@ -564,7 +551,6 @@ if __name__ == "__main__":
                 num = (SW[i, j] - numpy.min(SW[i])) / float((numpy.max(SW[i]) - numpy.min(SW[i])))
                 SW_norm[i, j] = num
 
-    W = calc_exp(train_data_matrix, 50)
 
     eval = []
     t = True
